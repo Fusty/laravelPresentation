@@ -1,25 +1,23 @@
-<footer class="page-footer">
+<footer class="page-footer materialize-red lighten-5">
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
-                <h5 class="white-text">Footer Content</h5>
-                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+                <h5 >Laravel 5 In a Nutshell</h5>
+                <p >Hope you're enjoying the talk.  </p>
             </div>
             <div class="col l4 offset-l2 s12">
-                <h5 class="white-text">Links</h5>
+                <h5 >Links</h5>
                 <ul>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                    <li><a href="//laravel.com/">Laravel</a></li>
+                    <li><a href="//laracasts.com/">Laracasts</a></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="footer-copyright">
-        <div class="container">
-            © 2014 Copyright Text
-            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+        <div class="container blue-grey-text">
+            © 2015 Alex Sterling
+            <a class="right" href="#!">More of my tutorials</a>
         </div>
     </div>
 </footer>

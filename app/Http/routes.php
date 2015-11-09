@@ -11,6 +11,20 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/',['as' => 'home', function () {
     return view('home');
+}]);
+
+Route::get('components',['as' => 'components', function () {
+    return view('components');
+}]);
+
+Route::group([], function(){
+    Route::get('foundation',['as' => 'foundation', function () {
+        return view('foundation');
+    }]);
 });
+
+Route::get('map',['as' => 'map', function () {
+    return view('map');
+}]);

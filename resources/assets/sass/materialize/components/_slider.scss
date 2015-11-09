@@ -56,6 +56,10 @@
         p { color: $slider-bg-color-light; }
       }
 
+      .caption-shadow {
+        background-color:rgba(0,0,0,0.7);
+      }
+
       &.active {
         z-index: 2;
       }

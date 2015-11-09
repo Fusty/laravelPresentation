@@ -11,6 +11,9 @@ body {
   // display: flex;
   // min-height: 100vh;
   // flex-direction: column;
+
+  //New default color
+  color: $primary-font-color;
 }
 
 main {
@@ -726,4 +729,8 @@ nav ul a span.badge {
 
 .no-padding {
   padding: 0 !important;
+}
+
+.border-radius {
+  border-radius:5px;
 }
