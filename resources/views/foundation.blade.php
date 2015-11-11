@@ -28,11 +28,101 @@
                     <h5 class="laravel-red">Application Structure</h5>
 
                     <p>Here's the basic structure. I have a couple of things in here that I ALWAYS add and I'll go over
-                        those.  </p>
-                    <p>Firstly</p>
+                        those. </p>
+
+                    <p>Firstly we have the <b>/app/</b> directory. This holds the controllers, models, routes and some
+                        other fun stuff. The only thing you'll put directly in this directory are models. There is
+                        already a default User model in here (User.php)<br/><br/>
+
+                        <b>/Console/</b> is where all of the artisan CLI commands live. Things like running migrations,
+                        seeding the database, or creating new controllers/models/etc. from the command line.<br/><br/>
+
+                        <b>/Events/</b> is where event classes will live. Events are a way of triggering behavior from
+                        inside the application. It could be something as simple as "the user has confirmed their email
+                        address" or as complex as "batch processing finished successfully, push that data off the
+                        cliff".<br/><br/>
+
+                        <b>/Exceptions/</b> is where all your exception handles should go. At least the general ones.
+                        Laravel doesn't really care where you put things.<br/><br/>
+
+                        <b>/Http/</b> is where all your controllers, routes and filters will live. Controllers marshall
+                        the bulk of the application. Routes connect incoming requests with the appropriate controller
+                        (or anonymous function as we'll see later), and Filters are powerful ways to impose shared
+                        behavior on routes or groups of routes (think authentication, or HTTPS only).<br/><br/>
+
+                        <b>/Jobs/</b> is a directory for queuable jobs. You'll need a driver like Beanstalkd, IronMQ,
+                        AmazonSQS or Redis to use these. This is stuff like sending a user an email reminder 5 hours
+                        from now, or batch processing at certain times or offsets.<br/><br/>
+
+                        <b>/Listeners/</b> will work the the exceptions described above. These actually execute some
+                        logic based on the above events firing.<br/><br/>
+
+                        <b>/Policies/</b> is an interesting section I have not used yet. You can write policies for
+                        resources users can control. Here you could define a policy that says normal users can view a
+                        given resource, but not update it.<br/><br/>
+
+                        <b>/Providers/</b> this directory contains classes that map parts of your application for easy
+                        use. For instance if you created the Policy described in the section above you would need to
+                        register it in the AuthServiceProvider. The AuthServiceProvider has a $policies property which
+                        is an array which maps certain resources to their policy classes.<br/><br/>
+
+                    </p>
+
+                    <p>Alongside <b>/app/</b> we have some other important chunks of the framework.
+                    </p>
+
+                    <p>
+                        <b>/bootstrap/</b> is what kickstarts the framework. It gets autoloading humming and generally
+                        should be left alone. Occasionally you'll need to regenerate the cache directory, but this is
+                        done through artisan CLI commands.<br/><br/>
+                    </p>
+
+                    <p>
+                        <b>/config/</b> holds all the configuration files for Laravel. It "should" also hold any
+                        configuration files for the packages you install via composer.</p>
+
+                    <p>Inside <b>/database/</b> lives our migrations, database seeds and any fake data factories you'll
+                        need for testing.</p>
+
+                    <p>
+                        <b>/public/</b> is what you'll actually serve to people. I often name the entire Laravel project
+                        directory something like <b>/projectNameSource/</b> and symlink a directory named <b>/projectName/</b>
+                        to <b>/projectNameSource/public/</b>. On apache or nginx servers running multiple Laravel
+                        projects this works very well.
+                    </p>
+
+                    <p>
+                        Inside <b>/resources/</b> lives our views and other static assets. I'd put compilable assets
+                        here as well as things like css, images, fonts etc. I usually symlink the servable directories
+                        (excludes scss/less/es6) into the <b>/public/</b> directory.
+                    </p>
+
+                    <p>
+                        <b>/storage/</b> is a directory you can almost totally ignore. It caches views and stuff to
+                        optimize the application a bit. It also stores other temporary things here. You'll need to open
+                        this directory to writing by your server user (apache, www-data etc.).
+                    </p>
+
+                    <p>
+                        <b>/tests/</b> who knows what goes here? Nobody tests applications. Just kidding!<br>
+                        PHPUnit is packaged with Laravel 5 by default. It has a little demo test in here to get you
+                        started.
+                    </p>
+
+                    <p>
+                        <b>/vendor/</b> this is where the framework guts and any other composer packages go. This is how
+                        composer and psr-0 and psr-4 autoloading works.
+                    </p>
+
+                    <p>
+                        <b>NOTE: </b> This is all very different from Laravel 4. It takes some getting used to, and the
+                        community remains a bit split on some of these changes. Just remember, where things go doesn't
+                        really matter. It's not like it's any crazier than SpringMVC!
+                    </p>
+
                 </div>
                 <div class="col s12 m6">
-                    <pre class="prettyprint">
+                    <pre class="">
 ├── app
 │   ├── Console
 │   │   ├── Commands
@@ -137,9 +227,9 @@
 │   │   └── views
 │   └── logs
 │       └── laravel.log
-├── tests
-│   ├── ExampleTest.php
-│   └── TestCase.php
+└── tests
+    ├── ExampleTest.php
+    └── TestCase.php
 
                     </pre>
                 </div>
@@ -149,7 +239,25 @@
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">CLI Stuff</h5>
 
-                    <p>content</p>
+                    <p>The CLI commands rock. They are generally referred to as artisan commands. They'll take the form
+                        of <b>"php artisan command arguments"</b><br/><br/>
+
+                        To list all the commands just run <b>"php artisan"</b>.<br/><br/>
+
+                        You can generate almost all classes in the <b>/app/Http/</b> directory with artisan commands.
+                        Just check out <b>"php artisan list make"</b><br/><br/>
+
+                        Another handy thing is putting the app in maintenance mode (displays a canned message to the
+                        user that the site is down). This is toggleable with <b>"php artisan down"</b> and <b>"php
+                            artisan up"</b><br/><br/>
+
+                        You'll also run your migrations from here. <b>"php artisan migrate"</b> will run all pending
+                        migrations. <b>"php artisan migrate:refresh"</b> will rollback all migrations and rerun them.
+                        Furthermore <b>"php artisan migrate:refresh --seed"</b> will rollback all migrations, rerun them
+                        and then seed the tables based on the content of <b>/app/database/seeds/DatabaseSeeder.php</b>.
+                        If you've got multiple seeders and wish to target a specific seeder class just issue the
+                        following <b>"php artisan migrate:refresh --seed --class=SomeSeederClassFileName"</b>
+                    </p>
                 </div>
             </div>
 
@@ -157,7 +265,9 @@
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">API Docs</h5>
 
-                    <p>content</p>
+                    <p>The api documentation for Laravel is great. It's all autogenerated but you'll often find the
+                        normal documentation lacking in depth. I've found lots of goodies by poking around the api docs.
+                        <a href="http://laravel.com/api/5.1/">You can find them here.</a></p>
                 </div>
             </div>
 
@@ -165,13 +275,46 @@
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">Folder Permissions</h5>
 
-                    <p>content</p>
+                    <p>This is something that often trips folks up when starting a Laravel project. The most important
+                        thing is to make sure /app/storage/ and /app/bootstrap/cache is writable by your webserver
+                        user.</p>
                 </div>
             </div>
 
             <div id="routing" class="section scrollspy row">
                 <div class="col s12 m10 l8">
                     <h4 class="laravel-red">Routing</h4>
+
+                    <p>
+                        Routing in Laravel is freaking sweet and dirt simple. It's the first thing that wowed me and
+                        made me wonder why
+                        so many other frameworks made this difficult.
+                    </p>
+
+                    <p>
+                        All your routing can live within <b>/app/Http/routes.php</b>. Let's go over some routing
+                        examples.
+                    </p>
+                    <pre class="prettyprint">
+Route::get('/', function () {
+    return view('home');
+});
+                    </pre>
+                    <p>
+                        This is the barebones root route. Let's dissect it piece by piece.<br/><br/>
+
+                        First we call get() function on the Route facade. This means we're only going to be handling get
+                        requests with this specific route. Other options include post(), put(), patch(), delete(),
+                        resource() and any(). The http verbs do what you think, only route requests using that verb. The
+                        resource() method is special and will map all http verbs to a RESTful controller with method
+                        names corresponding to the verbs. I'll go over that example a bit later.<br/><br/>
+
+                        Next we have the arguments for get(). The first argument is the url structure we want to
+                        capture. In this case it's the root for this project. This argument takes strings like
+                        "/home/user/userProfile".<br/><br/>
+
+                        The second argument in this case is an anonymous function/closure.  
+                    </p>
                 </div>
             </div>
 
@@ -366,7 +509,7 @@
 @endsection
 
 @section('foot')
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=&skin=desert"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=php&skin=desert"></script>
     <script>
         $(document).ready(function () {
             $('.scrollspy').scrollSpy();
