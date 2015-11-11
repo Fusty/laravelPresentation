@@ -293,8 +293,15 @@
 
                     <p>
                         All your routing can live within <b>/app/Http/routes.php</b>. Let's go over some routing
-                        examples.
+                        examples for the various types of routing.
                     </p>
+                </div>
+            </div>
+
+            <div id="closureroutes" class="section scrollspy row">
+                <div class="col s12 m10 l8">
+                    <h5 class="laravel-red">Closure Routes</h5>
+
                     <pre class="prettyprint">
 Route::get('/', function () {
     return view('home');
@@ -304,25 +311,86 @@ Route::get('/', function () {
                         This is the barebones root route. Let's dissect it piece by piece.<br/><br/>
 
                         First we call get() function on the Route facade. This means we're only going to be handling get
-                        requests with this specific route. Other options include post(), put(), patch(), delete(),
-                        resource() and any(). The http verbs do what you think, only route requests using that verb. The
-                        resource() method is special and will map all http verbs to a RESTful controller with method
-                        names corresponding to the verbs. I'll go over that example a bit later.<br/><br/>
+                        requests with this specific route. Other options include <b>post()</b>, <b>put()</b>,
+                        <b>patch()</b>, <b>delete()</b>, <b>resource()</b> and <b>any()</b>. The http verbs do what you
+                        think, only route requests using that verb. The resource() method is special and will map all
+                        http verbs to a RESTful controller with method names corresponding to the verbs. I'll go over
+                        that example a bit later. The <b>any()</b> method accepts any http verb.<br/><br/>
 
                         Next we have the arguments for get(). The first argument is the url structure we want to
                         capture. In this case it's the root for this project. This argument takes strings like
                         "/home/user/userProfile".<br/><br/>
 
-                        The second argument in this case is an anonymous function/closure.  
+                        The second argument in this case is an anonymous function/closure. This is what will execute
+                        upon reaching this route.<br/><br/>
+
+                        The guts of this function should return something useful to the user. In this case it is
+                        generating the view located at <b>/app/resources/views/home.php</b>. If you wanted to target a
+                        view in a subdirectory of <b>/views/</b> you'd use the pattern <b>"view('directory.subdirectory.viewName')"</b>.<br/><br/>
+
+                        That's a route! Look how simple it is! Let's look at a more advanced example.
                     </p>
-                </div>
-            </div>
+                    <pre class="prettyprint">
+Route::group(['middleware' => 'authLoggedIn'], function(){
+    Route::get('user/{id}/profile', ['as' => 'userProfile', function ($id) {
+        $data = array('user' => User::find($id));
 
-            <div id="closureroutes" class="section scrollspy row">
-                <div class="col s12 m10 l8">
-                    <h5 class="laravel-red">Closure Routes</h5>
+        $data['userIsAdmin'] = User::isAdmin();
 
-                    <p>content</p>
+        return view('user.profile', $data);
+    }]);
+
+    Route::get('user/{id}/profile/json', ['as' => 'userProfile', function ($id) {
+        return response()->json(User::find($id));
+    }]);
+});
+                    </pre>
+                    <p>
+                        Whoa, got a lot going on all of a sudden. Let's break it down.<br/><br/>
+
+                        First now we have <b>"Route::group()"</b>. That is a way to group the behavior of a bunch of
+                        routes. In the first argument we have an array with one entry, "middleware". Middleware is a way
+                        of running things before or after a request. In this case we're running the AuthLoggedIn
+                        middleware we've defined elsewhere. Let's pretend all this middleware does is checks if the user
+                        is logged in already (so they can view other user profiles) and if so passes them through,
+                        otherwise it'd return an error view of some sort.<br/><br/>
+
+                        Next is an anonymous function that will run as long as our middleware passes us
+                        through.<br/><br/>
+
+                        Inside this function we've got routes defined somewhat like before, two get routes but with
+                        fancier url structure.<br/><br/>
+
+                        The first route is capturing <b>user/{id}/profile</b> which could look like
+                        <b>user/13/profile</b> for instance. <br/><br/>
+
+                        The second argument is now an array instead of an anonymous function. Obviously the <b>get()</b>
+                        method
+                        is overloaded, yay flexiblity! In this array we have 2 entries one of which is named "as". The
+                        as entry allows you to name routes. This is extremely handy when your application is new. You
+                        might change how your url segments work, so if you use named routes and call those routes in
+                        your views with their names you don't have to worry about your url segments changing. I suggest
+                        you name all your routes just in case.<br/><br/>
+
+                        The unnamed entry in this array is the closure that will execute upon reaching this route.
+                        Notice is has an argument being passed in, <b>$id</b>. It matches the placeholder in the route
+                        string <b>/user/{id}/profiel</b>. This is extremely useful and leads to pretty urls avoiding
+                        ?param=val&param2=val2 stuff when not strictly necessary. So the user's id is passed via the
+                        second url segment here.<br/><br/>
+
+                        In the guts of the function we <b>find()</b> the user's entry within the <b>User</b> model. This
+                        returns an easy to traverse object containing all the data for this row of the user table. I'm
+                        sticking this in a data array for now. Next I lookup if the user is an admin and store that in
+                        the data array as well. For now let's pretend we have an extra method on our <b>User</b> model
+                        that determines this and is called <b>isAdmin()</b>. Finally we call the <b>user.profile</b>
+                        view and feed it the data array. This is handy because every entry in the data array will become
+                        a variable accessible by the view. I use this pattern on nearly all views that require some data
+                        from the controller. The view then uses this data to render the user's profile.<br/><br/>
+
+                        What's up with that second route? It just returns <b>response()->json(User::find($id))</b>. What
+                        good is this? Well it reformats the <b>User</b> model object as a json object and returns this
+                        as the response. Extremely handy for APIs or feeding data to ajax requests.<br/><br/>
+                    </p>
                 </div>
             </div>
 
@@ -330,37 +398,35 @@ Route::get('/', function () {
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">Controller Routes</h5>
 
-                    <p>content</p>
-                </div>
-            </div>
+                    <p>
+                        Another way to execute logic based on routes is to pass on to a controller. Often you'll have
+                        far too much logic to stuff into a close and wind up with a nice looking <b>routes.php</b> file.
+                        Controllers to the rescue! Let's look at an example.
+                    </p>
 
-            <div id="namedroutes" class="section scrollspy row">
-                <div class="col s12 m10 l8">
-                    <h5 class="laravel-red">Named Routes</h5>
+                    <pre class="prettyprint">
+Route::get('user/{id}/profile', ['as' => 'userProfile', 'uses' => "UserController{{ "@profile" }}"]);
+                    </pre>
 
-                    <p>content</p>
-                </div>
-            </div>
-
-            <div id="routegroups" class="section scrollspy row">
-                <div class="col s12 m10 l8">
-                    <h5 class="laravel-red">Route Groups</h5>
-
-                    <p>content</p>
-                </div>
-            </div>
-
-            <div id="filters" class="section scrollspy row">
-                <div class="col s12 m10 l8">
-                    <h5 class="laravel-red">Filters</h5>
-
-                    <p>content</p>
+                    <p>
+                        In this example we're just rehashing the user profile route, but now we're passing it to the
+                        <b>UserController</b> and specifically targeting the <b>profile()</b> method on that controller.
+                        That's about it, the
+                    </p>
                 </div>
             </div>
 
             <div id="controllers" class="section scrollspy row">
                 <div class="col s12 m10 l8">
                     <h4 class="laravel-red">Controllers</h4>
+
+                    <p>
+                        Controllers hold all of your request marshalling that won't fit or isn't appropriate for a
+                        closure in <b>routes.php</b>. You should still encapsulte business logic elsewhere in a large
+                        project, but I am of the opinion that it is fine to put business logic here if the project isn't
+                        too big. In my first Laravel projects I put nearly all my business logic here and it worked
+                        fine. It just might not be the most maintainable pile of crap.
+                    </p>
                 </div>
             </div>
 
@@ -368,7 +434,45 @@ Route::get('/', function () {
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">Simple Controller</h5>
 
-                    <p>content</p>
+                    <p>Controllers live in <b>/app/Http/Controllers/</b> and the naming convention is <b>SomethingController</b>.
+                        Let's explore the <b>UserController</b> we referenced in the routes discussion above.
+                    </p>
+
+                    <pre class="prettyprint">
+namespace App\Http\Controllers;
+
+use App\User;
+use App\Http\Controllers\Controller;
+
+class UserController extends Controller
+{
+    /**
+     * Show the profile for the given user.
+     * Gleaned from Laravel 5 docs
+     *
+     * {{ "@param" }} int  $id
+     * {{ "@return" }} Response
+     */
+    public function profile($id)
+    {
+        return view('user.profile', ['user' => User::findOrFail($id)]);
+    }
+}
+                    </pre>
+
+                    <p>
+                        So we're extending the base class <b>Controller</b>. This is common to all controllers. We have
+                        a single function called <b>profile()</b> which takes a single parameter <b>$id</b>.<br/><br/>
+
+                        It is basically replicating what we had in our closure, but now we can group other things
+                        related to users within this controller which makes sense and will help keep things
+                        organized.<br/><br/>
+
+                        We are passing another array object to the view, this time we do it all in one line and also
+                        call findOrFail() on the user model. Upon failure to find the user by the <b>$id</b> an
+                        exception will be thrown and the response will continue to be handled by that specific exception
+                        handler.
+                    </p>
                 </div>
             </div>
 
@@ -376,7 +480,87 @@ Route::get('/', function () {
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">REST Controller</h5>
 
-                    <p>content</p>
+                    <p>
+                        RESTful controllers are awesome and artisan helps you scaffold them with a single command. Try
+                        running <b>"php artisan make:controller SomeResourceController"</b>. It will create the
+                        following scaffold for a RESTful controller.
+                    </p>
+
+                    <pre class="prettyprint">
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+class SomeResourceController extends Controller
+{
+    //Comments ommitted for brevity
+    public function index()
+    {
+        //
+    }
+
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
+    }
+
+    public function show($id)
+    {
+        //
+    }
+
+    public function edit($id)
+    {
+        //
+    }
+
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    public function destroy($id)
+    {
+        //
+    }
+}
+                    </pre>
+                    <p>
+                        Neat, that was easy? Now what are all these functions and how do I use them?<br/><br/>
+
+                        On <a href="http://laravel.com/docs/5.1/controllers#restful-resource-controllers">this page</a>
+                        we have a reference table for which http verbs map to which methods. Let's create a simple route
+                        to handle this so we can see the whole picture.<br/><br/>
+
+                        <pre class="prettyprint">
+Route::resource('someResource', 'SomeResourceController');
+                        </pre>
+
+                    That's all we need, which is awesome. This will handle all http verbs and all the extra segments you
+                    see in the table linked above. Let's go over each method.<br/><br/>
+
+                    index() is what happens when we hit <b>/someResource/</b> via GET. Usually what you'd do here is
+                    return a listing of all the resources. You might want to display only the ones a user has permission
+                    to view and you might want to return this as a json object (I know I usually do!). You can do all of
+                    this conditionally of course, you are in control of what goes in the function body. The main idea is
+                    that this is all routed based on "standard" REST semantics.<br/><br/>
+
+                    create() is what happens when we hit <b>/someResource/create</b> via GET. This usually returns the
+                    form with which you'll be submitting new resources. This isn't always appropriate (imagine you're
+                    form is encapsulated within angular or something) but is mega handy if you restrict access to it to
+                    administrators so you can add data easily without much of a front end. You'll have to make this
+                    function render an appropriate form though.<br/><br/>
+
+                    store() is what happens when we hit <b>/someResource/</b> via POST. This is always how you'll create
+                    new resources. It should accept the action of the form you returned in the create() method.
+                    </p>
                 </div>
             </div>
 

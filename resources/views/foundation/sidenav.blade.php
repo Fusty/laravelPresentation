@@ -8,9 +8,6 @@
         <li><a href="#routing">Routing</a></li>
         <li class="nested-scrollspy"><a href="#closureroutes">Closure Routes</a></li>
         <li class="nested-scrollspy"><a href="#controllerroutes">Controller Routes</a></li>
-        <li class="nested-scrollspy"><a href="#namedroutes">Named Routes</a></li>
-        <li class="nested-scrollspy"><a href="#routegroups">Route Groups</a></li>
-        <li class="nested-scrollspy"><a href="#filters">Filters</a></li>
         <li><a href="#controllers">Controllers</a></li>
         <li class="nested-scrollspy"><a href="#simplecontroller">Simple Controller</a></li>
         <li class="nested-scrollspy"><a href="#restcontroller">REST Controller</a></li>

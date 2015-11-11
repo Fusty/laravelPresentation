@@ -28,3 +28,19 @@ Route::group([], function(){
 Route::get('map',['as' => 'map', function () {
     return view('map');
 }]);
+
+Route::group(['middleware' => 'someMiddleware'], function(){
+    Route::get('user/{id}/profile', ['as' => 'userProfile', function ($id) {
+        $data = array('user' => User::find($id));
+
+        $data['userIsAdmin'] = User::isAdmin();
+
+        return view('user.profile', $data);
+    }]);
+
+    Route::get('user/{id}/profile/json', ['as' => 'userProfile', function ($id) {
+        return response()->json(User::find($id));
+    }]);
+});
+
+//Route::get('user/{id}/profile', ['as' => 'userProfile', 'uses' => "UserController"]);
