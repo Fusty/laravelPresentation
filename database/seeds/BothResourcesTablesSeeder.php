@@ -32,7 +32,9 @@ class BothResourcesTablesSeeder extends Seeder
 
             //Link the two together so the one to one works
             $someResource->someOtherResource_id = $someOtherResource->id;
+            $someResource->save();
             $someOtherResource->someResource_id = $someResource->id;
+            $someOtherResource->save();
         }
 
     }

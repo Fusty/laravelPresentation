@@ -44,3 +44,32 @@ Route::group(['middleware' => 'someMiddleware'], function(){
 });
 
 //Route::get('user/{id}/profile', ['as' => 'userProfile', 'uses' => "UserController"]);
+
+Route::get('/someResourceRelationTest', function(){
+    //Get a SomeResource to play with, let's grab the first one it finds
+    $theResource = App\SomeResource::first();
+
+    //Get it's paired SomeOtherResource if it exists
+    //We'll get this with the relation method we just defined in the model
+    $theOtherResource = $theResource->someOtherResource();
+
+    //Let's get all the users associated with this resource, if any
+    $theResourcesUsers = $theResource->users();
+
+
+    //Let's do this without the extra steps, I want the other resource and users nested in one SomeResource object
+    $theResource = App\SomeResource::with('someOtherResource', 'users')->take(20)->get();
+
+    return response()->json($theResource);
+});
+
+Route::get('/someResourceUserCount', function(){
+    //Let's list the user counts for each resource.
+    $output = '';
+
+    foreach(App\SomeResource::all() as $resource){
+        $output .= "Resource #".$resource->id." has " . $resource->userCount() . " users associated with it.<br/><br/>";
+    }
+
+    return $output;
+});

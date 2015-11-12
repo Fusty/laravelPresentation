@@ -11,10 +11,6 @@ class SomeOtherResource extends Model
 
 
     public function someResource(){
-        return $this->hasOne('App\SomeResource');
-        //or
-        return $this->hasOne('App\SomeResource', 'id');
-        //or
-        return $this->hasOne('App\SomeResource', 'id', 'someResource_id');
+        return $this->hasOne('App\SomeResource', 'id', 'someOtherResource_id');
     }
 }

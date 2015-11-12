@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
+use App\SomeResource;
 
 class UserTableSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class UserTableSeeder extends Seeder
             User::create(array(
                 'name' => $faker->name,
                 'email' => $faker->safeEmail,
+                'someResource_id' => SomeResource::orderByRaw("Rand()")->first()->id,
                 'password' => Hash::make($faker->password),
                 'created_at' => $faker->dateTimeThisYear
             ));

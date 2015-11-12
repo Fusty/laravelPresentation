@@ -733,17 +733,17 @@ class SomeResource extends Model
     public function someOtherResource(){
         return $this->hasOne('App\SomeOtherResource');
         //or
-        return $this->hasOne('App\SomeOtherResource', 'id');
+        return $this->hasOne('App\SomeOtherResource', 'someResource_id');
         //or
-        return $this->hasOne('App\SomeOtherResource', 'id', 'someOtherResource_id');
+        return $this->hasOne('App\SomeOtherResource', 'someResource_id', 'id');
     }
 
     public function users(){
         return $this->hasMany('App\User');
         //or
-        return $this->hasMany('App\User', 'id');
+        return $this->hasMany('App\User', 'someResource_id');
         //or
-        return $this->hasMany('App\User', 'id', 'user_id');
+        return $this->hasMany('App\User', 'someResource_id', 'id');
     }
 }</pre>
 
@@ -774,15 +774,18 @@ Route::get('/someResourceRelationTest', function(){
 
 
     //Let's do this without the extra steps, I want the othe resource and users nested in one SomeResource object
-    $theResource = App\SomeResource::with('someOtherResource', 'users')->first();
+    $theResource = App\SomeResource::with('someOtherResource', 'users')->take(20)->get();
+
+    return response()->json($theResource);
 });
                     </pre>
 
                     <p>
-                        Now that's awesome. We'll end up with an object that represents <b>SomeResource</b>. It will
+                        Now that's awesome. We'll end up with 20 objects that represents <b>SomeResource</b>. Those will
                         have all the properties/columns <b>SomeResource</b> has plus a property for
                         <b>SomeOtherResource</b> (a model object of that type) and another property for <b>User</b>s (a
-                        collection of model objects of that type).<br/><br/>
+                        collection of model objects of that type). Check out <a
+                                href="{{ url('/someResourceRelationTest') }}">this example</a>.<br/><br/>
 
                         There are more to relations than just this. You can define the inverse of these relations, and
                         there is a lot of shorthand and fancy loading methods for these to avoid queryception. We'll
@@ -798,7 +801,7 @@ Route::get('/someResourceRelationTest', function(){
                     <p>
                         Wah, this isn't good enough. Wahhh, I don't want to repeat myself. Ok, you friggin' baby. Let's
                         write some shortcuts so you don't have to strain your infant mind (whoa, I need to wait until my
-                        coffee kicks in!).  Let's start with an example; <span style="color:#d5d5d5">an example for babies maybe;</span>
+                        coffee kicks in!). Let's start with an example; <span style="color:#d5d5d5">an example for babies maybe;</span>
                     </p>
 
                     <pre class="prettyprint">
@@ -823,10 +826,32 @@ class SomeResource extends Model
             return $this->userCount;
         } else {
             $this->userCount = $this->users()->count();
-            return $this->publishCount;
+            return $this->userCount;
         }
     }
 }                    </pre>
+                    <p>
+                        Cool, that looks pretty easy. There's an extra step to make sure we only run the query to get
+                        the count once. Nice! Let's use it.
+                    </p>
+
+                    <pre class="prettyprint">
+Route::get('/someResourceUserCount', function(){
+    //Let's list the user counts for each resource.
+    $output = '';
+
+    foreach(App\SomeResource::all() as $resource){
+        $output .= "Resource #".$resource->id." has " . $resource->userCount() . " users associated with it.<br/><br/>";
+    }
+
+    return $output;
+});                    </pre>
+
+                    <p>
+                        Cool, so we're just looping through all the <b>SomeResource</b> records and spitting out a
+                        formatted line about the user count. <a href="{{ url('/someResourceUserCount') }}">See the
+                            output here</a>
+                    </p>
 
                 </div>
             </div>
@@ -835,7 +860,11 @@ class SomeResource extends Model
                 <div class="col s12 m10 l8">
                     <h5 class="laravel-red">Validation Rules</h5>
 
-                    <p>content</p>
+                    <p>
+                        Validation rules are a commonly needed when users aren't expected to be perfect. You'll often
+                        want to validate the user input before you stuff it into the database. Make sure emails are
+                        emails and whatnot.
+                    </p>
                 </div>
             </div>
 

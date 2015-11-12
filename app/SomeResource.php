@@ -13,19 +13,11 @@ class SomeResource extends Model
     private $userCount;
 
     public function someOtherResource(){
-        return $this->hasOne('App\SomeOtherResource');
-        //or
-        return $this->hasOne('App\SomeOtherResource', 'id');
-        //or
-        return $this->hasOne('App\SomeOtherResource', 'id', 'someOtherResource_id');
+        return $this->hasOne('App\SomeOtherResource', 'someResource_id', 'id');
     }
 
     public function users(){
-        return $this->hasMany('App\User');
-        //or
-        return $this->hasMany('App\User', 'id');
-        //or
-        return $this->hasMany('App\User', 'id', 'user_id');
+        return $this->hasMany('App\User', 'someResource_id', 'id');
     }
 
     public function userCount(){
@@ -33,7 +25,7 @@ class SomeResource extends Model
             return $this->userCount;
         } else {
             $this->userCount = $this->users()->count();
-            return $this->publishCount;
+            return $this->userCount;
         }
     }
 }
