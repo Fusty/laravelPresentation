@@ -14,6 +14,7 @@
         <li class="nested-scrollspy"><a href="#controllerconstructors">Controller Constructors</a></li>
         <li><a href="#models">Models</a></li>
         <li class="nested-scrollspy"><a href="#simplestmodel">Simplest Model</a></li>
+        <li class="nested-scrollspy"><a href="#relations">Relations</a></li>
         <li class="nested-scrollspy"><a href="#shortcutfunctions">Shortcut Functions</a></li>
         <li class="nested-scrollspy"><a href="#validationrules">Validation Rules</a></li>
         <li class="nested-scrollspy"><a href="#multipledatabaseaccess">Multiple Database Access</a></li>
