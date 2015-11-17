@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\SomeResource;
-use App\SomeOtherResource;
+use App\Article;
+use App\SubArticle;
+use Faker\Provider\en_US\Company;
 
 class BothResourcesTablesSeeder extends Seeder
 {
@@ -18,23 +19,23 @@ class BothResourcesTablesSeeder extends Seeder
         //These need to be associated with one another, so seed them both at once!
         foreach(range(1,100) as $index)
         {
-            $someResource = SomeResource::create(array(
-                'title' => $faker->title,
-                'body' => $faker->text,
+            $article = Article::create(array(
+                'title' => $faker->catchPhrase,
+                'body' => $faker->text(1000),
                 'created_at' => $faker->dateTimeThisMonth
             ));
 
-            $someOtherResource = SomeOtherResource::create(array(
-                'title' => $faker->title,
-                'body' => $faker->text,
+            $subArticle = SubArticle::create(array(
+                'title' => $faker->catchPhrase,
+                'body' => $faker->text(1000),
                 'created_at' => $faker->dateTimeThisMonth
             ));
 
             //Link the two together so the one to one works
-            $someResource->someOtherResource_id = $someOtherResource->id;
-            $someResource->save();
-            $someOtherResource->someResource_id = $someResource->id;
-            $someOtherResource->save();
+            $article->subArticle_id = $subArticle->id;
+            $article->save();
+            $subArticle->article_id = $article->id;
+            $subArticle->save();
         }
 
     }

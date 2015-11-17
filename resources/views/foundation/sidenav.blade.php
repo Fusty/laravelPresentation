@@ -21,12 +21,11 @@
         <li><a href="#views">Views</a></li>
         <li class="nested-scrollspy"><a href="#whendoiview">When do I view?</a></li>
         <li class="nested-scrollspy"><a href="#whatgoesintheview">What goes in the view?</a></li>
-        <li class="nested-scrollspy"><a href="#nonstandardviewstuff">Non-standard view stuff</a></li>
+        <li class="nested-scrollspy"><a href="#bladetemplating">Blade Templating</a></li>
         <li><a href="#migrations">Migrations</a></li>
         <li class="nested-scrollspy"><a href="#migrationsrocktoohard">Migrations Rock Too Hard</a></li>
         <li class="nested-scrollspy"><a href="#basicmigration">Basic Migration</a></li>
         <li class="nested-scrollspy"><a href="#advancedmigration">Advanced Migration</a></li>
         <li class="nested-scrollspy"><a href="#seeding">Seeding</a></li>
-        <li class="nested-scrollspy"><a href="#artisancommands">Artisan Commands</a></li>
     </ul>
 </div>

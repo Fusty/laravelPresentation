@@ -4,20 +4,25 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SomeResource extends Model
+class Article extends Model
 {
-    protected $table = 'someResources';
+    protected $table = 'articles';
     protected $primaryKey = 'id';
+
+    public static $rules = [
+        'title' => 'required|unique:articles|max:255',
+        'body' => 'required',
+    ];
 
     //Let's store userCount as a property so we don't rerun the query if we've already grabbed this
     private $userCount;
 
-    public function someOtherResource(){
-        return $this->hasOne('App\SomeOtherResource', 'someResource_id', 'id');
+    public function subArticle(){
+        return $this->hasOne('App\SubArticle', 'article_id', 'id');
     }
 
     public function users(){
-        return $this->hasMany('App\User', 'someResource_id', 'id');
+        return $this->hasMany('App\User', 'article_id', 'id');
     }
 
     public function userCount(){

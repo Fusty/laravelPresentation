@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSomeResourceTable extends Migration
+class CreateSubArticleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,11 @@ class CreateSomeResourceTable extends Migration
      */
     public function up()
     {
-        Schema::create('someResources', function (Blueprint $table) {
+        Schema::create('subArticles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->string('body');
-            $table->integer('someOtherResource_id');
+            $table->integer('article_id');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateSomeResourceTable extends Migration
      */
     public function down()
     {
-        Schema::drop('someResources');
+        Schema::drop('subArticles');
     }
 }

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
-use App\SomeResource;
+use App\Article;
 
 class UserTableSeeder extends Seeder
 {
@@ -15,16 +15,21 @@ class UserTableSeeder extends Seeder
     {
         $faker = Faker\Factory::create();
 
+        $users = array();
+
         foreach(range(1,20) as $index)
         {
-            User::create(array(
+
+            array_push($users,array(
                 'name' => $faker->name,
                 'email' => $faker->safeEmail,
-                'someResource_id' => SomeResource::orderByRaw("Rand()")->first()->id,
+                'article_id' => Article::orderByRaw("Rand()")->first()->id,
                 'password' => Hash::make($faker->password),
                 'created_at' => $faker->dateTimeThisYear
             ));
         }
+
+        User::insert($users);
 
     }
 }
